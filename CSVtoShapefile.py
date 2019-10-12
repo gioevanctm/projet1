@@ -1,17 +1,11 @@
-import xlrd
-import shapefile
-import tkinter
-from tkinter.filedialog import *
-from tkinter import Button
-from tkinter import Label
-from tkinter import StringVar
-from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-import os, os.path
+
+import shapefile
+import xlrd
 
 path = askopenfilename(title="Ouverture fichier excel", filetypes=[('Excel files', '*.xlsx; *.xls'), ('all files', '.*')])
 
-path = "D:\\Gio\\Documents\\projet\\gendarmerie.xlsx"
+#path = "D:\\Gio\\Documents\\projet\\gendarmerie.xlsx"
 
 w = shapefile.Writer("D:\\Gio\\Documents\\projet\\gendarmerie")
 w.field('Telephone', "C")
