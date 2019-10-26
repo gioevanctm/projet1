@@ -4,7 +4,7 @@ from tkinter.filedialog import *
 from tkinter.messagebox import *
 from tkinter.ttk import Treeview
 
-from XlstoShape import xlstoshape
+from Utils.XlstoShape import xlstoshape
 
 
 class interface_xlstoshape(Frame):
