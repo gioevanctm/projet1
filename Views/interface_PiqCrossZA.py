@@ -1,6 +1,5 @@
 from tkinter import ttk
 from tkinter.filedialog import *
-from tkinter.messagebox import *
 
 from Utils.PiqCrossZA import piqCrossZA
 
@@ -132,17 +131,14 @@ class interface_piqCrossZa(Frame):
         self.value_output.set(self.path_test)
 
     def action(self):
-        try:
-            self.convert_tool.create_shape(self.sortie.get(), self.listed.get())
-        except TypeError as err:
-            askokcancel("Attention", *err.args)
-            return
+        self.analyse_tool.crossAnalyse(self.value_output, self.listed_zsro.get(), self.listed_pfsro.get(), self.listed_zpbo.get()
+                                       , self.listed_pfpbo.get(), self.listed_piq.get())
 
-        self.convert_tool.convert_file()
         print("Success")
 
 
 fenetre = Tk()
+fenetre.geometry("768x500")
 interface = interface_piqCrossZa(fenetre)
 
 interface.mainloop()

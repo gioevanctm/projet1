@@ -78,6 +78,6 @@ class interface_xlstoshape(Frame):
 
 fenetre = Tk()
 interface = interface_xlstoshape(fenetre)
-
+fenetre.geometry("768x500")
 interface.mainloop()
 interface.destroy()
