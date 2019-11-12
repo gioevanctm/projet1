@@ -6,6 +6,7 @@ from tkinter.messagebox import *
 import os
 import shapefile as sf
 from shapely.geometry import Polygon
+#from interface.Interface_Coherence_test import interface_coherence
 
 class coherence:
     # Création de la Classe
@@ -16,7 +17,7 @@ class coherence:
         self.shp_pfpbo = None
         self.shp_piq = None
         self.shp_error = None
-
+        self.nb_champ = 0
 
 
     def loadShpfile1(self, path1):
@@ -25,6 +26,7 @@ class coherence:
         for field in self.shp_zsro.fields:
             listefield.append(field[0])
         return listefield[1:]
+
 
     def loadShpfile2(self, path2):
         listefield =[]
@@ -55,10 +57,25 @@ class coherence:
         return listefield[1:]
 
     # AFFICHAGE DU CONTENU DE LA 1ER COLONNE
-    def loadShp1(self, path1):
+    def loadShp(self, path1, typefichier):
+        if typefichier == "zsro":
+            liste_rec = []
+            self.shp_zsro = sf.Reader(path1)
+            for record in self.shp_zsro.records():
+                liste_rec.append(record[self.nb_champ])
+            return liste_rec[:]
+
+
+    def loadShp2(self, path2, typefichier):
+
         liste_rec = []
-        self.shp_zsro_rec = sf.Reader(path1)
-        for record in self.shp_zsro_rec.records():
-            liste_rec.append(record[0])
+        self.shp_pfsro = sf.Reader(path2)
+        for record in self.shp_pfsro.records():
+                liste_rec.append(record[self.nb_champ])
         return liste_rec[:]
-        print(liste_rec[:])
+
+
+
+
+
+

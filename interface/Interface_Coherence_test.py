@@ -1,7 +1,10 @@
 from tkinter import tix
 from tkinter.filedialog import *
 
-from utilsgio.Coherence import coherence
+#from utilsgio.Coherence_test import coherence
+import utilsgio.Coherence_test
+
+
 
 class interface_coherence(Frame):# Création de la fenêtre principale (main window)
     def __init__(self, fenetre, **kwargs):
@@ -9,11 +12,11 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.pack(fill=BOTH, expand=True)
 
 #initialisation
-        self.listefield1=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-        self.listefield2=[1,2,3,4,1,2,3,4]
-        self.listefield3=[1,2,3,4,1,2,3,4,1,2,4]
-        self.listefield4=[1,2,3,4,1,2,3,4]
-        self.listefield5=[1,2,3,4,1,2,3,4,3]
+        self.listefield1=[]
+        self.listefield2=[]
+        self.listefield3=[]
+        self.listefield4=[]
+        self.listefield5=[]
         self.value_input_zsro = StringVar()
         self.value_input_pfsro = StringVar()
         self.value_input_zpbo = StringVar()
@@ -27,9 +30,14 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.varcombo1 = tix.StringVar()
         self.varcombo11 = tix.StringVar()
         self.varcombo2 = tix.StringVar()
+        self.varcombo22 = tix.StringVar()
         self.varcombo3 = tix.StringVar()
+        self.varcombo33 = tix.StringVar()
         self.varcombo4 = tix.StringVar()
+        self.varcombo44 = tix.StringVar()
         self.varcombo5 = tix.StringVar()
+        self.varcombo55 = tix.StringVar()
+
         self.champs_choisi1 = StringVar()
         self.champs_choisi2 = StringVar()
         self.champs_choisi3 = StringVar()
@@ -40,7 +48,8 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.path3 = StringVar()
         self.path4 = StringVar()
         self.path5 = StringVar()
-        self.coherence = coherence()
+        self.coherence = utilsgio.Coherence_test.coherence()
+        self.loadShp = None
 
 # création des Frames dans la fenêtre principale
         self.Frame1 = Frame(self, relief=GROOVE)
@@ -49,14 +58,14 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.Frame4 = Frame(self, relief=GROOVE)
         self.Frame5 = Frame(self, relief=GROOVE)
 # Placement des frames
-        self.Frame1.place(x=20, y=00, width=650, height=40)
-        self.Frame2.place(x=20, y=40, width=650, height=40)
-        self.Frame3.place(x=20, y=80, width=650, height=40)
-        self.Frame4.place(x=20, y=120, width=650, height=40)
-        self.Frame5.place(x=20, y=160, width=650, height=40)
+        self.Frame1.place(x=20, y=00, width=900, height=40)
+        self.Frame2.place(x=20, y=40, width=900, height=40)
+        self.Frame3.place(x=20, y=80, width=900, height=40)
+        self.Frame4.place(x=20, y=120, width=900, height=40)
+        self.Frame5.place(x=20, y=160, width=900, height=40)
         #Frame exécution
         self.Frame6 = Frame(self, relief=GROOVE)
-        self.Frame6.place(x=180, y=200, width=100, height=40)
+        self.Frame6.place(x=180, y=200, width=300, height=40)
 # ----------------------------------------------------------------------------------------------------------------------
 #                                               FRAME 1 constructeur
 # ----------------------------------------------------------------------------------------------------------------------
@@ -130,20 +139,32 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.bouton5.pack(side=RIGHT, padx=5, pady=5)  # afficher le bouton et le placer
 
 # -----------------------------------------------------------------------------------------------------------------------
-#                                               FRAME 6 fonction
+#                                               FRAME 6 constructeur
 # -----------------------------------------------------------------------------------------------------------------------
     # bouton parcourir
 
-        self.bouton6 = Button(self.Frame6, text="Executer")  # création de bouton
+        self.bouton6 = Button(self.Frame6, text="Lancer l'analyse")  # création de bouton
         self.bouton6.pack(side=RIGHT, padx=5, pady=5)  # afficher le bouton et le placer
 
 #-----------------------------------------------------------------------------------------------------------------------
 #                                               FRAME 1 fonction
 #-----------------------------------------------------------------------------------------------------------------------
+
+
 #Affectation de valeur liste déroulante
     def Affiche1(self, evt):
         self.champs_choisi1 = self.varcombo1.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
         print(self.champs_choisi1)
+        self.coherence.nb_champ = self.listefield1.index(self.champs_choisi1) #récupération de l'index du champs choisi
+        self.loadShp = self.coherence.loadShp(self.path1, "zsro")# récupération des données en fonction de l'index du champs choisi
+
+                                     # --------------------affichage dans tix--------------------#
+        self.combo11.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.loadShp)) #effacer le contenu de la combobox si on reclique
+        for i in range(0, len(self.loadShp)):
+            self.combo11.insert(i, self.loadShp[i])  # Liste est la liste qui récupère les champs
+            i+=1
+        self.combo11.pack(side=LEFT, padx=5, pady=5)
+                                     # --------------------affichage dans tix--------------------#
 
 #Définition des chemins
     def chose_file1(self):
@@ -151,17 +172,14 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.value_input_zsro.set(self.path1)  # value_imput devient le chemin
 
         self.listefield1 = self.coherence.loadShpfile1(self.path1)
+        self.combo1.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.listefield1))#effacer le contenu de la combobox si on reclique
         for i in range(0, len(self.listefield1)):
             self.combo1.insert(i, self.listefield1[i])  # Liste est la liste qui récupère les champs
             i+=1
+
         self.combo1.pack(side=LEFT, padx=5, pady=5)
 
-        # AFFICHAGE DU CONTENU DE LA 1ER COLONNE
-        self.loadShp1 = self.coherence.loadShp1(self.path1)
-        for i in range(0, len(self.loadShp1)):
-            self.combo11.insert(i, self.loadShp1[i])  # Liste est la liste qui récupère les champs
-            i+=1
-        self.combo11.pack(side=LEFT, padx=5, pady=5)
+
 
 #-----------------------------------------------------------------------------------------------------------------------
 #                                               FRAME 2 fonction
@@ -176,7 +194,9 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.path2 = askopenfilename(title="Chagement des emplacements SRO", filetypes=[('ShapeFiles', '*.shp'), ('All files', '*.*')])  # ouvrir un fichier emplacement des SRO
         self.value_input_pfsro.set(self.path2)  # value_imput devient le
 
+
         self.listefield2 = self.coherence.loadShpfile2(self.path2)
+        self.combo2.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.listefield2))#effacer le contenu de la combobox si on reclique
         for i in range(0, len(self.listefield2)):
             self.combo2.insert(i, self.listefield2[i])  # Liste est la liste qui récupère les champs
             i +=1
@@ -196,6 +216,7 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.value_input_zpbo.set(self.path3)  # value_imput devient le chemin
 
         self.listefield3 = self.coherence.loadShpfile3(self.path3)
+        self.combo3.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.listefield3))  # effacer le contenu de la combobox si on reclique
         for i in range(0, len(self.listefield3)):
             self.combo3.insert(i, self.listefield3[i])  # Liste est la liste qui récupère les champs
             i+=1
@@ -215,6 +236,7 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.value_input_pfpbo.set(self.path4)  # value_imput devient le chemin
 
         self.listefield4 = self.coherence.loadShpfile4(self.path4)
+        self.combo4.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.listefield4))  # effacer le contenu de la combobox si on reclique
         for i in range(0, len(self.listefield4)):
             self.combo4.insert(i, self.listefield4[i])  # Liste est la liste qui récupère les champs
             i+=1
@@ -234,14 +256,21 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.value_input_piq.set(self.path5)  # value_imput devient le chemin
 
         self.listefield5 = self.coherence.loadShpfile5(self.path5)
+        self.combo5.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.listefield5))  # effacer le contenu de la combobox si on reclique
         for i in range(0, len(self.listefield5)):
             self.combo5.insert(i, self.listefield5[i])  # Liste est la liste qui récupère les champs
             i+=1
         self.combo5.pack(side=LEFT, padx=5, pady=5)
 
+# -----------------------------------------------------------------------------------------------------------------------
+#                                               FRAME 6 fonction
+# -----------------------------------------------------------------------------------------------------------------------
+    #def analyse(self, field_zsro, field_pfsro, field_zpbo, field_pfpbo, field_piq):
+        # do something
+
 
 fenetre = tix.Tk()
 interface = interface_coherence(fenetre)
 fenetre.title('cohérence géographique')
-fenetre.geometry('700x250')
+fenetre.geometry('950x250')
 interface.mainloop()
