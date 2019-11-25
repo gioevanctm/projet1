@@ -1,7 +1,6 @@
 from tkinter import tix
 from tkinter.filedialog import *
-
-#from utilsgio.Coherence_test import coherence
+import shapefile
 import utilsgio.Coherence_test
 
 
@@ -17,6 +16,7 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.listefield3=[]
         self.listefield4=[]
         self.listefield5=[]
+        self.listefield55 = []
         self.value_input_zsro = StringVar()
         self.value_input_pfsro = StringVar()
         self.value_input_zpbo = StringVar()
@@ -28,21 +28,24 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.value_input_pfpbo.set("Charger les emplacements PBO")
         self.value_input_piq.set("Charger le Piq_BAL")
         self.varcombo1 = tix.StringVar()
-        self.varcombo11 = tix.StringVar()
         self.varcombo2 = tix.StringVar()
-        self.varcombo22 = tix.StringVar()
         self.varcombo3 = tix.StringVar()
-        self.varcombo33 = tix.StringVar()
         self.varcombo4 = tix.StringVar()
-        self.varcombo44 = tix.StringVar()
         self.varcombo5 = tix.StringVar()
         self.varcombo55 = tix.StringVar()
+        self.varcombo1.set('choisir "id_métier_"')
+        self.varcombo2.set('choisir "id_métier_"')
+        self.varcombo3.set('choisir "id_métier_"')
+        self.varcombo4.set('choisir "id_métier_"')
+        self.varcombo5.set('choisir "id_métier"')
+        self.varcombo55.set('choisir "nb_logemen"')
 
         self.champs_choisi1 = StringVar()
         self.champs_choisi2 = StringVar()
         self.champs_choisi3 = StringVar()
         self.champs_choisi4 = StringVar()
         self.champs_choisi5 = StringVar()
+        self.champs_choisi55 = StringVar()
         self.path1 = StringVar()
         self.path2 = StringVar()
         self.path3 = StringVar()
@@ -50,6 +53,10 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.path5 = StringVar()
         self.coherence = utilsgio.Coherence_test.coherence()
         self.loadShp = None
+        self.loadShp2 = None
+        self.loadShp3 = None
+        self.loadShp4 = None
+        self.loadShp5 = None
 
 # création des Frames dans la fenêtre principale
         self.Frame1 = Frame(self, relief=GROOVE)
@@ -74,9 +81,7 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.combo1 = tix.ComboBox(self.Frame1, editable=1, dropdown=1, variable=self.varcombo1, command=self.Affiche1)
         self.combo1.entry.config(state='readonly')  ## met la zone de texte en lecture seule
 
-        #AFFICHAGE DU CONTENU DE LA 1ER COLONNE
-        self.combo11 = tix.ComboBox(self.Frame1, editable=1, dropdown=1, variable=self.varcombo11, command=self.Affiche1)
-        self.combo11.entry.config(state='readonly')  ## met la zone de texte en lecture seule
+
 
         # bouton1 parcourir
         self.bouton1 = Button(self.Frame1, text="Parcourir...", command=self.chose_file1)  # création de bouton
@@ -100,15 +105,14 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 #-----------------------------------------------------------------------------------------------------------------------
         self.entree3 = Entry(self.Frame3, textvariable=self.value_input_zpbo)  # création de l'entrer
         self.entree3.pack(side=LEFT, fill=X, padx=5, expand=True)  # afficher le champ et le placer (expend true (si plus grand va s'adapter))
-
-    # liste déroulante
-
+        # liste déroulante
         self.combo3 = tix.ComboBox(self.Frame3, editable=1, dropdown=1, variable=self.varcombo3, command=self.Affiche3)
         self.combo3.entry.config(state='readonly')  ## met la zone de texte en lecture seule
 
-    # bouton parcourir
+        # bouton parcourir
         self.bouton3 = Button(self.Frame3, text="Parcourir...", command=self.chose_file3)  # création de bouton
         self.bouton3.pack(side=RIGHT, padx=5, pady=5)  # afficher le bouton et le placer
+
 
 # -----------------------------------------------------------------------------------------------------------------------
 #                                               FRAME 4 constructeur
@@ -133,6 +137,8 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.combo5 = tix.ComboBox(self.Frame5, editable=1, dropdown=1, variable=self.varcombo5, command=self.Affiche5)
         self.combo5.entry.config(state='readonly')  ## met la zone de texte en lecture seule
 
+        self.combo55 = tix.ComboBox(self.Frame5, editable=1, dropdown=1, variable=self.varcombo55, command=self.Affiche55)
+        self.combo55.entry.config(state='readonly')  ## met la zone de texte en lecture seule
 
         # bouton parcourir
         self.bouton5 = Button(self.Frame5, text="Parcourir...", command=self.chose_file5)  # création de bouton
@@ -143,7 +149,7 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 # -----------------------------------------------------------------------------------------------------------------------
     # bouton parcourir
 
-        self.bouton6 = Button(self.Frame6, text="Lancer l'analyse")  # création de bouton
+        self.bouton6 = Button(self.Frame6, text="Lancer l'analyse", command=self.coherence.analyse)  # création de bouton
         self.bouton6.pack(side=RIGHT, padx=5, pady=5)  # afficher le bouton et le placer
 
 #-----------------------------------------------------------------------------------------------------------------------
@@ -154,17 +160,8 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 #Affectation de valeur liste déroulante
     def Affiche1(self, evt):
         self.champs_choisi1 = self.varcombo1.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
-        print(self.champs_choisi1)
         self.coherence.nb_champ = self.listefield1.index(self.champs_choisi1) #récupération de l'index du champs choisi
         self.loadShp = self.coherence.loadShp(self.path1, "zsro")# récupération des données en fonction de l'index du champs choisi
-
-                                     # --------------------affichage dans tix--------------------#
-        self.combo11.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(self.loadShp)) #effacer le contenu de la combobox si on reclique
-        for i in range(0, len(self.loadShp)):
-            self.combo11.insert(i, self.loadShp[i])  # Liste est la liste qui récupère les champs
-            i+=1
-        self.combo11.pack(side=LEFT, padx=5, pady=5)
-                                     # --------------------affichage dans tix--------------------#
 
 #Définition des chemins
     def chose_file1(self):
@@ -177,7 +174,7 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
             self.combo1.insert(i, self.listefield1[i])  # Liste est la liste qui récupère les champs
             i+=1
 
-        self.combo1.pack(side=LEFT, padx=5, pady=5)
+        self.combo1.pack(side=LEFT, padx=5, pady=5, expand=False)
 
 
 
@@ -187,7 +184,8 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 #Affectation de valeur liste déroulante
     def Affiche2(self, evt):
         self.champs_choisi2=self.varcombo2.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
-        print(self.champs_choisi2)
+        self.coherence.nb_champ = self.listefield2.index(self.champs_choisi2) #récupération de l'index du champs choisi
+        self.loadShp2 = self.coherence.loadShp2(self.path2, "zsro")# récupération des données en fonction de l'index du champs choisi
 
 #Définition des chemins
     def chose_file2(self):
@@ -208,7 +206,8 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 #Affectation de valeur liste déroulante
     def Affiche3(self, evt):
         self.champs_choisi3=self.varcombo3.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
-        print(self.champs_choisi3)
+        self.coherence.nb_champ = self.listefield3.index(self.champs_choisi3) #récupération de l'index du champs choisi
+        self.loadShp3 = self.coherence.loadShp3(self.path3, "zpbo")# récupération des données en fonction de l'index du champs choisi
 
 #Définition des chemins
     def chose_file3(self):
@@ -226,9 +225,11 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 #                                               FRAME 4 fonction
 #-----------------------------------------------------------------------------------------------------------------------
 #Affectation de valeur liste déroulante
-    def Affiche4(self,evt):
+    def Affiche4(self, evt):
         self.champs_choisi4=self.varcombo4.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
-        print(self.champs_choisi4)
+        self.coherence.nb_champ = self.listefield4.index(self.champs_choisi4) #récupération de l'index du champs choisi
+        self.loadShp4 = self.coherence.loadShp4(self.path4, "zpbo")# récupération des données en fonction de l'index du champs choisi
+
 
 #Définition des chemins
     def chose_file4(self):
@@ -248,7 +249,14 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
 #Affectation de valeur liste déroulante
     def Affiche5(self, evt):
         self.champs_choisi5=self.varcombo5.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
-        print(self.champs_choisi5)
+        self.coherence.nb_champ = self.listefield5.index(self.champs_choisi5)  # récupération de l'index du champs choisi
+        self.loadShp5 = self.coherence.loadShp5(self.path5)
+        print(self.loadShp5)
+    def Affiche55(self, evt):
+        self.champs_choisi55 = self.varcombo55.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
+        self.coherence.nb_champ = self.listefield55.index(self.champs_choisi55)  # récupération de l'index du champs choisi
+        self.loadShp55 = self.coherence.loadShp55(self.path5)
+        print(self.loadShp55)
 
 #Définition des chemins
     def chose_file5(self):
@@ -260,13 +268,16 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         for i in range(0, len(self.listefield5)):
             self.combo5.insert(i, self.listefield5[i])  # Liste est la liste qui récupère les champs
             i+=1
-        self.combo5.pack(side=LEFT, padx=5, pady=5)
+        self.combo5.pack(side=RIGHT, padx=5, pady=5)
 
-# -----------------------------------------------------------------------------------------------------------------------
-#                                               FRAME 6 fonction
-# -----------------------------------------------------------------------------------------------------------------------
-    #def analyse(self, field_zsro, field_pfsro, field_zpbo, field_pfpbo, field_piq):
-        # do something
+        self.listefield55 = self.coherence.loadShpfile5(self.path5)
+        self.combo55.subwidget_list['slistbox'].subwidget_list['listbox'].delete(0, len(
+            self.listefield55))  # effacer le contenu de la combobox si on reclique
+        for i in range(0, len(self.listefield55)):
+            self.combo55.insert(i, self.listefield55[i])  # Liste est la liste qui récupère les champs
+            i+=1
+        self.combo55.pack(side=LEFT, padx=5, pady=5)
+
 
 
 fenetre = tix.Tk()
