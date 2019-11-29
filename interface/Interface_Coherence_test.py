@@ -251,12 +251,12 @@ class interface_coherence(Frame):# Création de la fenêtre principale (main win
         self.champs_choisi5=self.varcombo5.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
         self.coherence.nb_champ = self.listefield5.index(self.champs_choisi5)  # récupération de l'index du champs choisi
         self.loadShp5 = self.coherence.loadShp5(self.path5)
-        print(self.loadShp5)
+
     def Affiche55(self, evt):
         self.champs_choisi55 = self.varcombo55.get()  # On affecte le champs a "champs_choisi" et on affiche a l'ecran la valeur selectionnee
         self.coherence.nb_champ = self.listefield55.index(self.champs_choisi55)  # récupération de l'index du champs choisi
         self.loadShp55 = self.coherence.loadShp55(self.path5)
-        print(self.loadShp55)
+
 
 #Définition des chemins
     def chose_file5(self):
